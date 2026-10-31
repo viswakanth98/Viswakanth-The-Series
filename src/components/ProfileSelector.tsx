@@ -6,28 +6,60 @@ import { EASE } from './fx';
 export function ProfileAvatar({ id, size = 'lg' }: { id: ProfileId; size?: 'sm' | 'lg' }) {
   const p = viewerProfiles.find((v) => v.id === id)!;
   const box = size === 'lg' ? 'h-24 w-24 sm:h-32 sm:w-32 md:h-36 md:w-36 rounded-xl' : 'h-8 w-8 rounded-md';
-  if (id === 'sushmita') {
+  if (id === 'viswakanth') {
     return (
       <span className={`relative block overflow-hidden ${box}`} style={{ background: 'radial-gradient(circle at 50% 30%, #7a0f24, #1a0509)' }}>
-        <img src="/assets/portrait-420.webp" alt="" className="absolute inset-x-0 bottom-0 mx-auto h-[115%] w-auto max-w-none -translate-x-[3%] object-cover object-top" />
+        <img src={profile.portrait.src} alt="" className="absolute inset-x-0 bottom-0 mx-auto h-[115%] w-auto max-w-none -translate-x-[3%] object-cover object-top" />
       </span>
     );
   }
-  const glyph = { recruiter: 'R', developer: '</>', creative: '✦' }[id];
   return (
     <span
-      className={`relative flex items-center justify-center overflow-hidden font-display text-bone ${box}`}
+      className={`group/avatar relative flex items-center justify-center overflow-hidden text-bone ${box}`}
       style={{ background: `linear-gradient(145deg, ${p.color}, #0b0b10 120%)` }}
     >
-      <span className={size === 'lg' ? 'text-4xl sm:text-5xl' : 'text-sm'}>{glyph}</span>
+      <span aria-hidden className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.28),transparent_36%)]" />
+      <ProfileGlyph id={id} size={size} />
     </span>
+  );
+}
+
+function ProfileGlyph({ id, size }: { id: Exclude<ProfileId, 'viswakanth'>; size: 'sm' | 'lg' }) {
+  const className = size === 'lg' ? 'h-14 w-14 sm:h-16 sm:w-16' : 'h-5 w-5';
+
+  if (id === 'recruiter') {
+    return (
+      <svg viewBox="0 0 64 64" className={`${className} relative transition-transform duration-300 group-hover/avatar:-translate-y-1`} fill="none" aria-label="Hiring manager profile icon">
+        <rect x="12" y="19" width="40" height="31" rx="5" stroke="currentColor" strokeWidth="3" />
+        <path d="M24 19v-4.5A3.5 3.5 0 0 1 27.5 11h9a3.5 3.5 0 0 1 3.5 3.5V19M12 29h40M27 29v4h10v-4" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="m46 8 1.5 4.5L52 14l-4.5 1.5L46 20l-1.5-4.5L40 14l4.5-1.5L46 8Z" fill="currentColor" />
+      </svg>
+    );
+  }
+
+  if (id === 'developer') {
+    return (
+      <svg viewBox="0 0 64 64" className={`${className} relative transition-transform duration-300 group-hover/avatar:scale-110`} fill="none" aria-label="Engineer profile icon">
+        <rect x="9" y="13" width="46" height="37" rx="6" stroke="currentColor" strokeWidth="3" />
+        <path d="M9 23h46M17 32l-6 5 6 5M27 42l10-14M47 32l6 5-6 5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="16" cy="18" r="1.5" fill="currentColor" /><circle cx="22" cy="18" r="1.5" fill="currentColor" /><circle cx="28" cy="18" r="1.5" fill="currentColor" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 64 64" className={`${className} relative transition-transform duration-500 group-hover/avatar:rotate-45`} fill="none" aria-label="Explorer profile icon">
+      <circle cx="32" cy="32" r="21" stroke="currentColor" strokeWidth="3" />
+      <path d="m39.5 24.5-4.2 10.8-10.8 4.2 4.2-10.8 10.8-4.2Z" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M32 7v5M32 52v5M7 32h5M52 32h5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
   );
 }
 
 export default function ProfileSelector({ onPick }: { onPick: (id: ProfileId) => void }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onPick('sushmita');
+      if (e.key === 'Escape') onPick('viswakanth');
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -63,7 +95,7 @@ export default function ProfileSelector({ onPick }: { onPick: (id: ProfileId) =>
             <button type="button" onClick={() => onPick(p.id)} data-cursor="play" className="group flex flex-col items-center gap-3 text-center">
               <span className="relative rounded-xl ring-2 ring-transparent transition duration-300 group-hover:scale-105 group-hover:ring-bone group-focus-visible:ring-bone">
                 <ProfileAvatar id={p.id} />
-                {p.id === 'sushmita' && (
+                {p.id === 'viswakanth' && (
                   <span className="absolute -right-2 -top-2 rounded-full bg-crimson px-2 py-0.5 text-[9px] font-bold tracking-[0.18em] text-white">MAIN</span>
                 )}
               </span>

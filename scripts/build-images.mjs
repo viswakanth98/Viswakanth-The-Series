@@ -1,5 +1,5 @@
 // Builds optimized portrait assets from the original photos in the project root.
-// pic1.jpeg = high-resolution source, pic.png = background-removed cutout (same framing).
+// pic1.jpeg = high-resolution source, portrait-cutout.png = transparent background-removed cutout.
 // The cutout's alpha mask is upscaled and applied to the high-res photo so the face stays sharp.
 import sharp from 'sharp';
 import { mkdirSync } from 'node:fs';
@@ -10,7 +10,7 @@ mkdirSync(OUT, { recursive: true });
 const hi = sharp('pic1.jpeg');
 const { width, height } = await hi.metadata();
 
-const alpha = await sharp('pic.png')
+const alpha = await sharp('public/assets/portrait-cutout.png')
   .ensureAlpha()
   .extractChannel('alpha')
   .resize(width, height, { kernel: 'lanczos3' })
@@ -45,9 +45,9 @@ await sharp({ create: { width: 1200, height: 630, channels: 4, background: '#070
     { input: portrait, gravity: 'southeast' },
     {
       input: Buffer.from(`<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
-        <text x="72" y="300" font-family="Impact, 'Arial Narrow', sans-serif" font-size="128" fill="#f4f1ec" letter-spacing="4">SUSHMITA</text>
+        <text x="72" y="300" font-family="Impact, 'Arial Narrow', sans-serif" font-size="128" fill="#f4f1ec" letter-spacing="4">VISWAKANTH</text>
         <text x="78" y="352" font-family="Helvetica, Arial, sans-serif" font-weight="700" font-size="26" fill="#ff3d5a" letter-spacing="16">THE SERIES</text>
-        <text x="78" y="420" font-family="Helvetica, Arial, sans-serif" font-weight="600" font-size="18" fill="#a7a6ad" letter-spacing="5">FULL-STACK DEVELOPER • AI / ML • JAVA</text>
+        <text x="78" y="420" font-family="Helvetica, Arial, sans-serif" font-weight="600" font-size="18" fill="#a7a6ad" letter-spacing="5">DEVOPS ENGINEER • AWS CLOUD • AGENTIC AI</text>
       </svg>`),
     },
   ])

@@ -15,6 +15,7 @@ import Originals from './components/Originals';
 import TopPicks from './components/TopPicks';
 import Skills from './components/Skills';
 import Achievements from './components/Achievements';
+import Testimonials from './components/Testimonials';
 import ResumeSection from './components/ResumeViewer';
 import FinalCTA from './components/FinalCTA';
 import { EASE } from './components/fx';
@@ -26,7 +27,7 @@ const ResumeModal = lazy(() => import('./components/ResumeModal'));
 
 type Stage = 'opening' | 'profiles' | 'home';
 
-const STORAGE_KEY = 'sushmita-series-profile';
+const STORAGE_KEY = 'viswakanth-series-profile';
 
 function readStoredProfile(): ProfileId | null {
   try {
@@ -48,7 +49,7 @@ export default function App() {
 function Series() {
   const stored = readStoredProfile();
   const [stage, setStage] = useState<Stage>(stored ? 'home' : 'opening');
-  const [profileId, setProfileId] = useState<ProfileId>(stored ?? 'sushmita');
+  const [profileId, setProfileId] = useState<ProfileId>(stored ?? 'viswakanth');
   const [playing, setPlaying] = useState(false);
   const [project, setProject] = useState<Project | null>(null);
   const [resumeOpen, setResumeOpen] = useState(false);
@@ -100,6 +101,7 @@ function Series() {
     picks: <TopPicks />,
     skills: <Skills />,
     moments: <Achievements />,
+    testimonials: <Testimonials />,
     story: <ResumeSection onView={() => setResumeOpen(true)} />,
   };
 
