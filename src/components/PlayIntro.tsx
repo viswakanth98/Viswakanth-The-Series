@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useMotionValue } from 'framer-motion';
 import { introSlides, profile } from '../data/portfolio';
 import { useScrollLock } from '../hooks/smoothScroll';
@@ -17,7 +17,38 @@ export default function PlayIntro({ onClose }: { onClose: () => void }) {
   const [phase, setPhase] = useState<'zoom' | 'reel' | 'end'>(reduced ? 'reel' : 'zoom');
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const progress = useMotionValue(0);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = 0.24;
+    audio.currentTime = 0;
+    const attemptPlay = audio.play();
+    attemptPlay.catch(() => setMuted(true));
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (paused) {
+      audio.pause();
+    } else {
+      audio.play().catch(() => setMuted(true));
+    }
+  }, [paused]);
+
+  const toggleMute = () => {
+    const nextMuted = !muted;
+    setMuted(nextMuted);
+    if (audioRef.current) audioRef.current.muted = nextMuted;
+  };
 
   useEffect(() => {
     if (phase !== 'zoom') return;
@@ -92,6 +123,7 @@ export default function PlayIntro({ onClose }: { onClose: () => void }) {
       aria-modal="true"
       aria-label="Intro highlight reel"
     >
+      <audio ref={audioRef} src="/assets/intro-music.mp3" loop preload="auto" aria-label="Intro background music" />
       {/* Zoom into the portrait */}
       <motion.div
         className="absolute inset-0 flex items-end justify-center"
@@ -202,6 +234,14 @@ export default function PlayIntro({ onClose }: { onClose: () => void }) {
               {paused ? '▶' : '❚❚'}
             </button>
           )}
+          <button
+            type="button"
+            onClick={toggleMute}
+            aria-label={muted ? 'Unmute intro music' : 'Mute intro music'}
+            className="flex h-11 items-center justify-center rounded-full border border-white/25 px-4 text-[10px] font-bold tracking-[0.16em] text-bone transition hover:bg-white/10"
+          >
+            {muted ? 'MUSIC OFF' : 'MUSIC ON'}
+          </button>
           <span className="hidden text-[11px] tracking-[0.2em] text-smoke sm:block">SPACE · ← → · ESC</span>
         </div>
         <button
